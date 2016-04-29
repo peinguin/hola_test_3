@@ -2,7 +2,7 @@
 const Perceptron = require('perceptron'),
 	helpers = require('./helpers');
 
-module.exports = exports = { init, test };
+module.exports = exports = { init: init, test: test };
 
 var weights;
 
@@ -14,8 +14,7 @@ function init(data) {
 }
 
 function test(word) {
-	const wordLen = word.length,
-		perceptron = weights[word.length];
+	const perceptron = weights[word.length];
 	if (!perceptron) {
 		return false;
 	}

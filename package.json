@@ -4,15 +4,18 @@
   "description": "Hola test 3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/"
+    "url": "https://github.com/peinguin/hola_test_3.git"
   },
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "perceptron": "0.0.1",
-    "request": "^2.72.0"
+    "request": "^2.72.0",
+    "webpack": "^1.13.0"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
   "engines": {
     "node": "6.0.0"
   }

@@ -1,5 +1,5 @@
 const fs = require('fs'),
-	task = require('./task'),
+	task = require('./task.min'),
 	request = require('request'),
 	filename = './weights',
 	url = 'https://hola.org/challenges/word_classifier/testcase/0';

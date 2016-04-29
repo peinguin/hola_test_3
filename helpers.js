@@ -5,4 +5,4 @@ function stringToArray(word) {
 	});
 }
 
-module.exports = exports = { stringToArray };
+module.exports = exports = { stringToArray: stringToArray };
