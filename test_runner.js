@@ -1,8 +1,12 @@
-const fs = require('fs'),
+const Perceptron = require('perceptron'),
+	fs = require('fs'),
+	helpers = require('./helpers'),
+	backendHelpers = require('./backendHelpers'),
 	task = require('./task.min'),
 	request = require('request'),
 	filename = './weights',
-	url = 'https://hola.org/challenges/word_classifier/testcase/0';
+	url = 'https://hola.org/challenges/word_classifier/testcase/0',
+	doTeach = true;
 
 fs.readFile(filename, 'utf8', function(err, data) {
 	if (err) throw err;
@@ -10,14 +14,19 @@ fs.readFile(filename, 'utf8', function(err, data) {
 	const buf = new Buffer(data);
 	task.init(buf);
 
-	getTestData();
+	getTestData(JSON.parse(data));
 });
 
-function getTestData() {
+function getTestData(weights) {
 	request(url, function (error, response, body) {
 		if (error || response.statusCode !== 200) throw 'get test data error';
 
-		test(JSON.parse(body));
+		const data = JSON.parse(body);
+		test(data);
+		if (doTeach) {
+			teach(data, weights);
+			test(data);
+		}
 	});
 }
 
@@ -29,4 +38,29 @@ function test(testData) {
 	});
 
 	console.log('percent', successTries / words.length);
+}
+
+function teach(data, weights) {
+	backendHelpers.getWords(teachAll.bind(null, data, weights));
+}
+
+function teachAll(data, weights, words) {
+	weights = Object.keys(weights).map(function(wordLen) {
+		return new Perceptron({ weights: weights[wordLen] });
+	});
+
+	backendHelpers.processExistWords(words, weights);
+
+	Object.keys(data).forEach(function(word) {
+		const perceptron = weights[word.length];
+		if (!perceptron) {
+			return;
+		}
+		const wordCodes = helpers.stringToArray(word);
+		perceptron.train(wordCodes, +data[word]);
+	});
+
+	backendHelpers.retrain(weights);
+
+	backendHelpers.writeWeights(weights);
 }
